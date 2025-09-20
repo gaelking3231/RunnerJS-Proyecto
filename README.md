@@ -5,7 +5,7 @@
 Este proyecto fue desarrollado como parte del primer departamental, integrando tecnologías de frontend y backend para crear una experiencia de juego completa.
 ✨ ¡Juega Ahora! ✨
 
-    Juego en Vivo: gaelking3231.github.io/RunnerJS-Proyecto/docs/
+    Juego en Vivo: https://gaelking3231.github.io/RunnerJS-Proyecto/index.html
 
     API del Leaderboard: runnerjs-proyecto.onrender.com/scores
 
