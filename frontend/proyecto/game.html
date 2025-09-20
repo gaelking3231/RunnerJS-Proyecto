@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RunnerJS - El Juego</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Press Start 2P', cursive;
+            background-color: #121212;
+            color: #f0f0f0;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        #game-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        #game-container {
+            border: 4px solid #00ff87;
+            box-shadow: 0 0 30px rgba(0, 255, 135, 0.5), inset 0 0 15px rgba(0, 255, 135, 0.3);
+            position: relative;
+            background-color: #1a1a1a;
+        }
+        canvas {
+            display: block;
+            image-rendering: pixelated; /* Mantiene el estilo pixel art al escalar */
+        }
+        .hud {
+            position: absolute;
+            top: 15px;
+            left: 20px;
+            right: 20px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 18px;
+            color: #00ff87;
+            text-shadow: 2px 2px #000;
+            pointer-events: none; /* Evita que el HUD intercepte clics */
+        }
+        .modal {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            text-align: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+        .modal.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-content {
+            background-color: #1a1a1a;
+            padding: 40px;
+            border: 4px solid #00ff87;
+            box-shadow: 0 0 20px rgba(0, 255, 135, 0.5);
+            width: 90%;
+            max-width: 500px;
+        }
+        input[type="text"] {
+            background-color: #333;
+            border: 2px solid #555;
+            padding: 10px 15px;
+            color: #eee;
+            margin-top: 15px;
+            text-align: center;
+            outline: none;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 14px;
+            width: 80%;
+            transition: border-color 0.3s;
+        }
+        input[type="text"]:focus {
+            border-color: #00ff87;
+        }
+        button {
+            background-color: #00ff87;
+            color: #1a1a1a;
+            padding: 12px 24px;
+            border: none;
+            cursor: pointer;
+            margin-top: 20px;
+            font-family: 'Press Start 2P', cursive;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-size: 16px;
+        }
+        button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px #00ff87;
+        }
+        #leaderboard {
+            width: 100%;
+            margin-top: 20px;
+        }
+        #leaderboard h3 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: #00ff87;
+        }
+        #leaderboard ol {
+            list-style: none;
+            padding: 0;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+         #leaderboard li {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 5px;
+            border-bottom: 1px dashed #444;
+            font-size: 14px;
+        }
+        #back-link {
+            margin-top: 20px;
+            color: #aaa;
+            text-decoration: none;
+            font-size: 12px;
+        }
+        #back-link:hover {
+            color: #00ff87;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-wrapper">
+        <div id="game-container">
+            <canvas id="gameCanvas"></canvas>
+            <div class="hud">
+                <div>Score: <span id="score">0</span></div>
+                <div>Lvl: <span id="level">1</span></div>
+                <div>Hi: <span id="hiScore">0</span></div>
+            </div>
+            <!-- Game Over Modal -->
+            <div id="gameOverModal" class="modal">
+                <div class="modal-content">
+                    <h2 class="text-4xl text-red-500">GAME OVER</h2>
+                    <p class="mt-4 text-xl">Tu puntuación: <span id="finalScore">0</span></p>
+                    <div id="saveScoreForm">
+                        <input type="text" id="playerName" placeholder="Ingresa tu nombre" maxlength="10">
+                        <p id="validationMessage" class="text-red-500 text-xs mt-2 h-4"></p>
+                        <button id="saveScoreBtn">Guardar</button>
+                    </div>
+                    <button id="restartBtn">Ver Leaderboard</button>
+                </div>
+            </div>
+            <!-- Leaderboard / Start Modal -->
+            <div id="leaderboardModal" class="modal visible">
+                 <div class="modal-content">
+                    <h2 class="text-4xl text-green-400">RunnerJS</h2>
+                    <div id="leaderboard">
+                        <h3>Mejores Puntuaciones</h3>
+                        <ol id="scoreList"></ol>
+                        <p id="apiStatus" class="text-yellow-500 text-xs mt-2"></p>
+                    </div>
+                    <button id="startBtn">Iniciar Juego</button>
+                </div>
+            </div>
+        </div>
+        <a id="back-link" href="../index.html">Volver al Portafolio</a>
+    </div>
+
+<script>
+// =================================================================
+// API LOGIC
+// =================================================================
+const API_URL = 'http://localhost:3000/api/scores';
+
+async function fetchScores() {
+    try {
+        const response = await fetch(API_URL);
+        if (!response.ok) throw new Error('Servidor no responde.');
+        const scores = await response.json();
+        return { scores, source: 'API' };
+    } catch (error) {
+        console.warn(error.message, 'Cargando desde LocalStorage.');
+        const localScores = JSON.parse(localStorage.getItem('runnerjs_scores') || '[]');
+        return { scores: localScores, source: 'LocalStorage' };
+    }
+}
+
+async function saveScore(name, score, level) {
+    const record = { name, score, level };
+    try {
+        const response = await fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(record),
+        });
+        if (!response.ok) throw new Error('Error al guardar en el servidor.');
+        return await response.json();
+    } catch (error) {
+        console.warn(error.message, "Guardando en LocalStorage como fallback.");
+        let localScores = JSON.parse(localStorage.getItem('runnerjs_scores') || '[]');
+        localScores.push(record);
+        localScores.sort((a, b) => b.score - a.score);
+        localScores = localScores.slice(0, 10);
+        localStorage.setItem('runnerjs_scores', JSON.stringify(localScores));
+        return { message: 'Puntuación guardada localmente.' };
+    }
+}
+
+function getLocalHiScore() {
+    return parseInt(localStorage.getItem('runnerjs_hiscore') || '0');
+}
+
+function setLocalHiScore(score) {
+    const currentHi = getLocalHiScore();
+    if (score > currentHi) {
+        localStorage.setItem('runnerjs_hiscore', score);
+    }
+}
+
+// =================================================================
+// GAME LOGIC
+// =================================================================
+document.addEventListener('DOMContentLoaded', () => {
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    const scoreEl = document.getElementById('score');
+    const levelEl = document.getElementById('level');
+    const hiScoreEl = document.getElementById('hiScore');
+    const gameOverModal = document.getElementById('gameOverModal');
+    const leaderboardModal = document.getElementById('leaderboardModal');
+    const finalScoreEl = document.getElementById('finalScore');
+    const startBtn = document.getElementById('startBtn');
+    const restartBtn = document.getElementById('restartBtn');
+    const saveScoreBtn = document.getElementById('saveScoreBtn');
+    const playerNameInput = document.getElementById('playerName');
+    const scoreListEl = document.getElementById('scoreList');
+    const apiStatusEl = document.getElementById('apiStatus');
+    const validationMessageEl = document.getElementById('validationMessage');
+
+    const CANVAS_WIDTH = 800;
+    const CANVAS_HEIGHT = 400;
+    const GROUND_Y = CANVAS_HEIGHT - 50;
+    canvas.width = CANVAS_WIDTH;
+    canvas.height = CANVAS_HEIGHT;
+
+    let player, obstacles = [], score = 0, level = 1, hiScore = 0, gameSpeed = 5, gameOver = false, animationFrameId;
+    let obstacleTimer = 0, levelUpScore = 500;
+    let gameMessage = { text: '', duration: 0 };
+
+    class Player {
+        constructor() {
+            this.width = 40; this.height = 60; this.x = 50; this.y = GROUND_Y - this.height;
+            this.velocityY = 0; this.gravity = 0.8; this.jumpForce = -19; this.isJumping = false;
+        }
+        draw() {
+            ctx.fillStyle = '#00ff87'; ctx.fillRect(this.x, this.y, this.width, this.height);
+            ctx.fillStyle = '#1a1a1a'; ctx.fillRect(this.x + 25, this.y + 15, 8, 8);
+        }
+        update() {
+            this.y += this.velocityY;
+            if (this.y + this.height < GROUND_Y) { this.velocityY += this.gravity; this.isJumping = true; } 
+            else { this.velocityY = 0; this.y = GROUND_Y - this.height; this.isJumping = false; }
+        }
+        jump() { if (!this.isJumping) this.velocityY = this.jumpForce; }
+    }
+
+    class Obstacle {
+        constructor() {
+            const type = Math.random() > 0.3 ? 'tall' : 'short';
+            this.width = 30; this.height = type === 'tall' ? 60 : 35;
+            this.x = CANVAS_WIDTH; this.y = GROUND_Y - this.height;
+        }
+        draw() { ctx.fillStyle = '#ff4136'; ctx.fillRect(this.x, this.y, this.width, this.height); }
+        update() { this.x -= gameSpeed; }
+    }
+
+    function init() {
+        player = new Player(); obstacles = []; score = 0; level = 1; gameSpeed = 5;
+        levelUpScore = 500; gameOver = false; hiScore = getLocalHiScore();
+        document.getElementById('saveScoreForm').style.display = 'block';
+        playerNameInput.value = '';
+        gameOverModal.classList.remove('visible'); leaderboardModal.classList.remove('visible');
+        updateHUD(); gameLoop();
+    }
+    
+    function showLeaderboard() {
+        leaderboardModal.classList.add('visible');
+        gameOverModal.classList.remove('visible');
+        scoreListEl.innerHTML = '<li>Cargando...</li>';
+
+        fetchScores().then(({ scores, source }) => {
+            apiStatusEl.textContent = source === 'API' ? "Conectado al servidor" : "Servidor no disponible. Mostrando scores locales.";
+            
+            // FIX: Filter out any invalid scores before trying to display them
+            const validScores = scores.filter(s => s && typeof s.name === 'string' && typeof s.score === 'number');
+
+            if (validScores.length === 0) {
+                scoreListEl.innerHTML = '<li>¡Sé el primero en jugar!</li>';
+                return;
+            }
+            
+            scoreListEl.innerHTML = validScores.map(s => `<li><span>${s.name} (Lvl ${s.level})</span><span>${s.score}</span></li>`).join('');
+        });
+    }
+
+    function updateHUD() {
+        scoreEl.textContent = score; levelEl.textContent = level; hiScoreEl.textContent = hiScore;
+    }
+
+    function increaseDifficulty() {
+        if (score > levelUpScore) {
+            level++; gameSpeed += 0.5; levelUpScore += 500 * level;
+            // FIX: Better level up notification
+            gameMessage.text = `NIVEL ${level}`; gameMessage.duration = 120; // 2 seconds
+        }
+    }
+
+    function checkCollision(r1, r2) {
+        return r1.x < r2.x + r2.width && r1.x + r1.width > r2.x && r1.y < r2.y + r2.height && r1.y + r1.height > r2.y;
+    }
+
+    function drawGround() {
+        ctx.fillStyle = '#333'; ctx.fillRect(0, GROUND_Y, CANVAS_WIDTH, CANVAS_HEIGHT - GROUND_Y);
+    }
+
+    function gameLoop() {
+        if (gameOver) return;
+        animationFrameId = requestAnimationFrame(gameLoop);
+        ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+        drawGround(); player.update(); player.draw();
+
+        obstacleTimer++;
+        const obstacleInterval = 70 / (gameSpeed / 5);
+        if (obstacleTimer > obstacleInterval + Math.random() * 50) {
+            obstacles.push(new Obstacle()); obstacleTimer = 0;
+        }
+        obstacles.forEach((o, i) => { o.update(); o.draw(); if (checkCollision(player, o)) endGame(); if (o.x + o.width < 0) obstacles.splice(i, 1); });
+
+        // Draw level up message
+        if (gameMessage.duration > 0) {
+            ctx.font = "30px 'Press Start 2P'";
+            ctx.fillStyle = `rgba(255, 255, 0, ${gameMessage.duration / 120})`;
+            ctx.textAlign = "center";
+            ctx.fillText(gameMessage.text, CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2);
+            gameMessage.duration--;
+        }
+
+        score++; if(score > hiScore) hiScore = score;
+        increaseDifficulty(); updateHUD();
+    }
+
+    function endGame() {
+        gameOver = true; cancelAnimationFrame(animationFrameId);
+        setLocalHiScore(score); finalScoreEl.textContent = score;
+        gameOverModal.classList.add('visible');
+    }
+
+    // Event Listeners
+    window.addEventListener('keydown', e => { if ((e.code === 'Space' || e.code === 'ArrowUp') && !gameOver) { e.preventDefault(); player.jump(); } });
+    window.addEventListener('touchstart', e => { if (!gameOver) { e.preventDefault(); player.jump(); } });
+    startBtn.addEventListener('click', init);
+    restartBtn.addEventListener('click', showLeaderboard);
+
+    saveScoreBtn.addEventListener('click', () => {
+        const playerName = playerNameInput.value.trim();
+        // FIX: Replaced alert with non-blocking validation message
+        if (!playerName) {
+            validationMessageEl.textContent = '¡Ingresa un nombre!';
+            playerNameInput.style.borderColor = '#ff4136';
+            setTimeout(() => {
+                validationMessageEl.textContent = '';
+                playerNameInput.style.borderColor = '';
+            }, 2000);
+            return;
+        }
+        saveScore(playerName, score, level).then(() => {
+            document.getElementById('saveScoreForm').style.display = 'none';
+        });
+    });
+    
+    showLeaderboard(); // Initial load
+});
+</script>
+</body>
+</html>

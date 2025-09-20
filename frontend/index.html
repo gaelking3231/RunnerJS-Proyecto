@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" conatent="width=device-width, initial-scale=1.0">
+    <title>RunnerJS - Portafolio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Fuente estilo pixel -->
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Press Start 2P', cursive;
+            background-color: #1a1a1a;
+            color: #f0f0f0;
+        }
+        .text-glow {
+            text-shadow: 0 0 8px #00ff87, 0 0 10px #00ff87;
+        }
+        .card {
+            background-color: #2c2c2c;
+            border: 2px solid #444;
+            transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+            display: block; /* Asegura que toda la tarjeta sea un enlace */
+            text-decoration: none; /* Quita el subrayado del enlace */
+        }
+        .card:hover {
+            transform: translateY(-10px);
+            border-color: #00ff87;
+            box-shadow: 0 10px 20px rgba(0, 255, 135, 0.2);
+        }
+        .header-nav a {
+            transition: color 0.3s, text-shadow 0.3s;
+        }
+        .header-nav a:hover, .header-nav a.active {
+            color: #00ff87;
+            text-shadow: 0 0 5px #00ff87;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <!-- Header -->
+    <header class="py-6">
+        <nav class="container mx-auto px-6 flex justify-between items-center">
+            <h1 class="text-2xl font-bold">Mi Portafolio</h1>
+            <div class="header-nav flex items-center space-x-8 text-lg">
+                <a href="#" class="active">Inicio</a>
+                <a href="#practicas">Prácticas</a>
+                <a href="proyecto/game.html">Proyecto</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <main class="container mx-auto px-6 text-center mt-12">
+        <h2 class="text-7xl font-bold text-green-400 text-glow">RunnerJS</h2>
+        <p class="mt-6 max-w-2xl mx-auto text-gray-400 text-base leading-relaxed" style="font-family: 'Inter', sans-serif;">
+            Bienvenido a mi portafolio de desarrollo. Aquí encontrarás las prácticas realizadas y el proyecto integrador del primer departamental: un juego endless runner con Node.js.
+        </p>
+
+        <!-- Proyecto Integrador Card -->
+        <section class="mt-20">
+            <h3 class="text-5xl font-bold mb-10">Proyecto Integrador</h3>
+            <div class="max-w-md mx-auto">
+                <a href="proyecto/game.html" class="p-8 rounded-lg card">
+                    <h4 class="text-3xl font-semibold text-green-400">Juego RunnerJS</h4>
+                    <p class="mt-4 text-gray-400 text-sm leading-relaxed" style="font-family: 'Inter', sans-serif;">
+                        Un juego endless runner inspirado en el clásico de Google. Salta, esquiva obstáculos, sube de nivel y compite por el mejor puntaje en el leaderboard.
+                    </p>
+                </a>
+            </div>
+        </section>
+
+        <!-- Prácticas Section -->
+        <section id="practicas" class="mt-20">
+            <h3 class="text-5xl font-bold mb-10">Prácticas Anteriores</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-4xl mx-auto">
+                
+                <!-- Practica 00 -->
+                <a href="practicas/practica00/index.html" class="p-6 rounded-lg card">
+                    <h4 class="text-xl font-semibold">Práctica 00</h4>
+                     <p class="mt-2 text-gray-400 text-sm" style="font-family: 'Inter', sans-serif;">Página Personal</p>
+                </a>
+
+                <!-- Practica 01 -->
+                <a href="practicas/practica01/index.html" class="p-6 rounded-lg card">
+                    <h4 class="text-xl font-semibold">Práctica 01</h4>
+                     <p class="mt-2 text-gray-400 text-sm" style="font-family: 'Inter', sans-serif;">Login Fantástico</p>
+                </a>
+                 
+                <!-- Practica 02 -->
+                <a href="practicas/practica02/index.html" class="p-6 rounded-lg card">
+                    <h4 class="text-xl font-semibold">Práctica 02</h4>
+                     <p class="mt-2 text-gray-400 text-sm" style="font-family: 'Inter', sans-serif;">Tarjeta de presentacion</p>
+                </a>
+                 
+                <!-- Practica 03 -->
+                <a href="practicas/practica03/index.html" class="p-6 rounded-lg card">
+                    <h4 class="text-xl font-semibold">Práctica 03</h4>
+                     <p class="mt-2 text-gray-400 text-sm" style="font-family: 'Inter', sans-serif;">App de Meditación</p>
+                </a>
+
+                <!-- Practica 04 -->
+                <a href="practicas/practica04/index.html" class="p-6 rounded-lg card">
+                    <h4 class="text-xl font-semibold">Práctica 04</h4>
+                     <p class="mt-2 text-gray-400 text-sm" style="font-family: 'Inter', sans-serif;">Memorama</p>
+                </a>
+
+                <!-- Practica 05 -->
+                <a href="practicas/practica05/index.html" class="p-6 rounded-lg card">
+                    <h4 class="text-xl font-semibold">Práctica 05</h4>
+                     <p class="mt-2 text-gray-400 text-sm" style="font-family: 'Inter', sans-serif;">Clima</p>
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-24 pb-8">
+        <div class="container mx-auto px-6 text-center text-gray-600">
+            <p>&copy; 2025 [LEVI GAEL RODRIGUEZ RAMIREZ].</p>
+        </div>
+    </footer>
+
+</body>
+</html>

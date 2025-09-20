@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tarjeta de Presentación — Levi Gael</title>
+  <style>
+    :root{
+      --bg: #0f172a;
+      --card: #111827;
+      --text: #e5e7eb;
+      --muted:#9ca3af;
+      --primary:#22d3ee;
+      --accent:#a78bfa;
+      --ring: rgba(34,211,238,.35);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      color:var(--text);
+      background:
+        radial-gradient(1000px 500px at 10% -10%, rgba(167,139,250,.15), transparent),
+        radial-gradient(1200px 600px at 110% 10%, rgba(34,211,238,.12), transparent),
+        var(--bg);
+      display:grid; place-items:center; padding:24px;
+    }
+
+    .card{
+      width:min(680px, 92vw);
+      background: linear-gradient(180deg, rgba(255,255,255,.03), transparent 60%) , var(--card);
+      border-radius:24px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.35);
+      border:1px solid rgba(255,255,255,.06);
+      position:relative;
+      overflow:hidden;
+      padding:28px; 
+      display:grid; 
+      grid-template-columns: 120px 1fr; 
+      gap:20px;
+      transition: transform .2s ease, box-shadow .2s ease;
+      outline: 0.5px solid rgba(255,255,255,.04);
+    }
+    .card:hover{ transform: translateY(-2px); box-shadow: 0 18px 40px rgba(0,0,0,.45); }
+
+    .avatar-wrap{ position:relative; width:120px; height:120px; border-radius:22px; overflow:hidden; }
+    .avatar{
+      width:100%; height:100%; border-radius:22px; overflow:hidden;
+    }
+    .avatar img{
+      width:100%; height:100%; object-fit:cover; object-position: center top; display:block;
+      transition: transform .25s ease, filter .25s ease;
+    }
+    .avatar img:hover{ transform: scale(1.05); filter: saturate(1.1) brightness(1.05); }
+
+    .head{ display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
+    .name{ font-size: clamp(22px, 3.6vw, 32px); font-weight:800; line-height:1.1; }
+    .career{ color:var(--primary); font-weight:600; letter-spacing:.3px; margin-top:4px; }
+    .desc{ color:var(--text); opacity:.9; margin:12px 0 8px; line-height:1.6; }
+
+    .badges{ display:flex; gap:10px; flex-wrap:wrap; margin:8px 0 6px; }
+    .badge{ font-size:12px; color:#0b1220; background: linear-gradient(90deg, var(--primary), var(--accent));
+      padding:6px 10px; border-radius:999px; font-weight:700; letter-spacing:.3px; }
+
+    .actions{ display:flex; gap:12px; align-items:center; margin-top:8px; }
+    .btn{
+      appearance:none; border:none; cursor:pointer; user-select:none;
+      padding:12px 16px; border-radius:14px; font-weight:800; letter-spacing:.4px; 
+      color:#08111f; background: linear-gradient(180deg, #e6fbff, #c7f7ff);
+      box-shadow: 0 8px 20px var(--ring), inset 0 0 0 1px rgba(0,0,0,.05);
+      transition: transform .15s ease, box-shadow .2s ease, filter .2s ease; 
+    }
+    .btn:hover{ transform: translateY(-1px); box-shadow: 0 14px 28px var(--ring); filter: brightness(1.04); }
+    .btn:active{ transform: translateY(0); box-shadow: 0 8px 16px var(--ring); }
+    .btn[aria-pressed="true"]{ background: linear-gradient(180deg, #eae7ff, #dcd6ff); }
+
+    .contact{ 
+      margin-top:10px; padding:14px 16px; border-radius:14px; background: rgba(148,163,184,.08);
+      border:1px solid rgba(255,255,255,.06); color:var(--text); line-height:1.6; 
+    }
+    .contact a{ color:var(--primary); font-weight:700; text-decoration:none; }
+    .contact a:hover{ text-decoration:underline; }
+    .contact[hidden]{ display:none; }
+
+    footer{ margin-top:8px; color:var(--muted); font-size:12px; }
+
+    @media (max-width:560px){
+      .card{ grid-template-columns: 1fr; text-align:center; }
+      .avatar-wrap{ margin:0 auto; }
+      .actions{ justify-content:center; flex-wrap:wrap; }
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      *{ transition:none !important; animation: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <article class="card" role="region" aria-label="Tarjeta de presentación">
+    <div class="avatar-wrap">
+      <div class="avatar">
+        <img src="foto.jpg" alt="Foto de perfil de Levi Gael">
+      </div>
+    </div>
+
+    <div>
+      <header class="head">
+        <div>
+          <h1 class="name">Levi Gael Rodríguez Ramírez</h1>
+          <div class="career">Estudiante de Informática</div>
+        </div>
+      </header>
+
+      <p class="desc">
+        Apasionado por redes, desarrollo y proyectos creativos. Me gusta construir cosas útiles, del código a lo visual.
+        Siempre aprendiendo, mejorando y compartiendo.
+      </p>
+
+      <div class="badges" aria-hidden="true">
+        <span class="badge">HTML5/CSS3</span>
+        <span class="badge">Cisco • Redes</span>
+        <span class="badge">Arduino/IoT</span>
+      </div>
+
+      <div class="actions">
+        <button id="toggleBtn" class="btn" type="button" aria-controls="contact" aria-pressed="false">Mostrar contacto</button>
+      </div>
+
+      <section id="contact" class="contact" hidden>
+        <p style="margin:0 0 6px"><strong>Correo:</strong> <a href="mailto:gaelking321@example.com">gaelking321@example.com</a></p>
+        <p style="margin:0"><strong>Teléfono:</strong> <a href="tel:+5215555555555">+52 1 55 5555 5555</a></p>
+      </section>
+
+      <footer>Hecho con ♥ en HTML, CSS y JavaScript.</footer>
+    </div>
+  </article>
+
+  <script>
+    const btn = document.getElementById('toggleBtn');
+    const panel = document.getElementById('contact');
+
+    function toggleContact(){
+      const isHidden = panel.hasAttribute('hidden');
+      if(isHidden){
+        panel.removeAttribute('hidden');
+        btn.setAttribute('aria-pressed','true');
+        btn.textContent = 'Ocultar contacto';
+        panel.animate?.([
+          {opacity:0, transform:'translateY(-6px)'},
+          {opacity:1, transform:'translateY(0)'}
+        ], {duration:180, easing:'ease-out'});
+      } else {
+        panel.setAttribute('hidden','');
+        btn.setAttribute('aria-pressed','false');
+        btn.textContent = 'Mostrar contacto';
+      }
+    }
+
+    btn.addEventListener('click', toggleContact);
+  </script>
+</body>
+</html>

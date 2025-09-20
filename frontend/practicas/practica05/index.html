@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Clima Local • Práctica 5</title>
+  <!-- Font Awesome (iconos gratis) -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    integrity="sha512-1ycn6IcaQQ40/J6MdG1L5VPBKsZ3e3Z1hZ+Z1ZC1N9JQ3ZB5+5m4k3j1RrC8Cz1w9fhW1jvct7r1L+1Q5g2Z0g=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!--
+    Práctica 5
+    - Usa la geolocalización del navegador para obtener lat/lon.
+    - Consume la API pública de OpenWeatherMap con fetch().
+    - Muestra datos (temperatura, sensación, humedad, viento, descripción).
+    - Cambia el fondo dinámico según el clima.
+    - Maneja errores (permiso denegado, sin conexión) y ofrece búsqueda por ciudad.
+  -->
+
+  <header class="app-header">
+    <h1><i class="fa-solid fa-cloud-sun"></i> Clima Local</h1>
+    <p class="subtitle">HTML5 + CSS3 + JS + OpenWeatherMap</p>
+  </header>
+
+  <!-- Barra de búsqueda (visible si el usuario rechaza permisos o cuando quiera buscar otra ciudad) -->
+  <section class="search-area">
+    <form id="cityForm" autocomplete="off">
+      <input id="cityInput" type="text" placeholder="Buscar ciudad (ej. Ciudad de México)" aria-label="Ciudad" />
+      <button id="cityBtn" type="submit"><i class="fa-solid fa-magnifying-glass"></i> Buscar</button>
+    </form>
+    <small class="hint">Si negaste permisos de ubicación, usa la búsqueda por ciudad.</small>
+  </section>
+
+  <!-- Spinner de carga -->
+  <div id="loader" class="loader" aria-live="polite" aria-busy="true" hidden>
+    <div class="spinner"></div>
+    <p>Cargando clima…</p>
+  </div>
+
+  <!-- Tarjeta de clima -->
+  <main>
+    <article class="card" id="weatherCard" hidden>
+      <div class="card-header">
+        <h2 id="locationName">—</h2>
+        <div id="dateStr" class="date">—</div>
+      </div>
+
+      <div class="card-body">
+        <div class="left">
+          <div class="temp" id="temp">—°C</div>
+          <div class="feel">Sensación: <span id="feels">—°C</span></div>
+          <div class="desc" id="desc">—</div>
+        </div>
+        <div class="right">
+          <div class="icon" id="icon" aria-hidden="true">🌤️</div>
+          <ul class="meta">
+            <li><i class="fa-solid fa-droplet"></i> Humedad: <span id="humidity">—%</span></li>
+            <li><i class="fa-solid fa-wind"></i> Viento: <span id="wind">— km/h</span></li>
+          </ul>
+        </div>
+      </div>
+    </article>
+
+    <!-- Capas para animaciones (lluvia/nieve) -->
+    <div id="fxRain" class="fx-rain" aria-hidden="true"></div>
+    <div id="fxSnow" class="fx-snow" aria-hidden="true"></div>
+  </main>
+
+  <footer class="app-footer">
+    <p>Hecho para la <strong>Práctica 5</strong>. Usa tu propia clave de OpenWeatherMap en <code>app.js</code>.</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
