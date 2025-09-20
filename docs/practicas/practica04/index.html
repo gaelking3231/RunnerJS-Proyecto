@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Juego de Memoria — Práctica 4</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <h1>🎮 Juego de Memoria (6 parejas)</h1>
+    <div class="hud">
+      <div class="hud-item">⏱️ Transcurrido: <span id="time">00:00</span></div>
+      <div class="hud-item">⏳ Restante: <span id="remaining">60</span>s</div>
+      <div class="hud-item">🧮 Intentos: <span id="attempts">0</span></div>
+      <div class="hud-item hud-input">
+        Límite (seg): <input id="limitInput" type="number" min="5" max="999" value="60" />
+      </div>
+      <div class="hud-item">🏆 Score: <span id="score">0</span></div>
+      <button id="resetBtn" class="btn">Reiniciar</button>
+    </div>
+  </header>
+
+  <main>
+    <section id="board" class="board" aria-label="Tablero de cartas"></section>
+    <p id="message" class="message" role="status" aria-live="polite"></p>
+  </main>
+
+  <footer class="footer">
+    <small>Funciona con click/tap (sin hover). Hecho para móvil y desktop.</small>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

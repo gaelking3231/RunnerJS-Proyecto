@@ -1,0 +1,151 @@
+/* =========================
+   Práctica 4 — Juego de Memoria
+   - Flip 3D, sombras, bordes redondeados, transiciones
+   - Diseño responsive en grid
+   ========================= */
+:root{
+  --bg: #0f1222;
+  --panel: #171a2e;
+  --accent: #6cf;
+  --text: #eaf2ff;
+  --card: #222645;
+  --card-front: #2a2f5c;
+  --success: #74ffb0;
+}
+
+*{ box-sizing: border-box; }
+
+html, body{
+  height: 100%;
+  margin: 0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  color: var(--text);
+  background: radial-gradient(1200px 600px at top left, #1b1f3a, var(--bg));
+}
+
+.topbar{
+  display: grid;
+  gap: .5rem;
+  padding: 1rem;
+  background: linear-gradient(90deg, #13162b, #14183a);
+  border-bottom: 1px solid #2a2f55;
+}
+.topbar h1{
+  margin: 0;
+  font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+  letter-spacing: .3px;
+}
+
+.hud{
+  display: flex;
+  gap: .75rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.hud-item{
+  background: var(--panel);
+  padding: .5rem .75rem;
+  border-radius: 12px;
+  border: 1px solid #2b3163;
+  box-shadow: 0 6px 14px rgba(0,0,0,.25) inset;
+}
+
+.btn{
+  cursor: pointer;
+  border: none;
+  border-radius: 12px;
+  padding: .6rem 1rem;
+  background: linear-gradient(180deg, #2e7cf7, #2a64f0);
+  color: white;
+  font-weight: 700;
+  box-shadow: 0 6px 18px rgba(46,124,247,.35);
+  transition: transform .12s ease, filter .2s;
+}
+.btn:active{ transform: translateY(1px) scale(.99); }
+.btn:focus{ outline: 2px solid #9fd0ff; outline-offset: 2px; }
+
+main{
+  margin: 1.25rem auto;
+  max-width: 900px;
+  padding: 0 1rem;
+}
+
+.board{
+  /* Grid responsive: 4 columnas (desktop), 3 (móvil) */
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(4, minmax(70px, 1fr));
+  perspective: 1000px; /* Necesario para flip 3D */
+}
+@media (max-width: 640px){
+  .board{ grid-template-columns: repeat(3, minmax(86px, 1fr)); }
+}
+
+.card{
+  position: relative;
+  width: 100%;
+  padding-top: 120px; /* mantiene proporción alta */
+  border-radius: 16px;
+  cursor: pointer;
+  transform-style: preserve-3d;
+  transition: transform .5s ease;
+}
+.card .inner{
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  transform-style: preserve-3d;
+  transition: transform .5s ease;
+}
+.card .face{
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 16px;
+  backface-visibility: hidden;
+  box-shadow: 0 10px 26px rgba(0,0,0,.35), 0 2px 0 rgba(255,255,255,.06) inset;
+  border: 1px solid #2b2f57;
+}
+.card .front{
+  background: linear-gradient(180deg, var(--card-front), #21264a);
+}
+.card .back{
+  background: linear-gradient(180deg, var(--card), #1a1f3e);
+  transform: rotateY(180deg);
+  font-size: clamp(1.75rem, 4.2vw, 2.7rem);
+  filter: drop-shadow(0 6px 12px rgba(0,0,0,.35));
+}
+
+.card.flipped .inner{ transform: rotateY(180deg); }
+.card.matched{ outline: 2px solid var(--success); filter: saturate(1.2); }
+.card.locked{ pointer-events: none; }
+
+.message{
+  text-align: center;
+  margin: 1rem 0 0;
+  min-height: 1.5em;
+  font-weight: 600;
+}
+
+.footer{
+  text-align: center;
+  padding: 1rem;
+  opacity: .8;
+}
+
+/* ---- HUD input ---- */
+.hud-input{
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+}
+.hud-input input{
+  width: 72px;
+  padding: .35rem .5rem;
+  background: #0f1330;
+  color: var(--text);
+  border: 1px solid #2b3163;
+  border-radius: 10px;
+  font-weight: 700;
+}
