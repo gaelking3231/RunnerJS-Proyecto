@@ -1,34 +1,62 @@
 const express = require('express');
-const fs = require('fs');
+const fs = require('fs').promises;
 const path = require('path');
-const cors = require('cors');
-const bodyParser = require('body-parser');
+const cors = require('cors'); // Importamos el paquete CORS
 
 const app = express();
-app.use(cors()); app.use(bodyParser.json());
+// Usamos el puerto que nos asigne Render, o el 3000 si corremos localmente
+const PORT = process.env.PORT || 3000; 
 
-const DATA = path.join(__dirname, 'data', 'scores.json');
-function readScores(){ try{return JSON.parse(fs.readFileSync(DATA))}catch(e){return []} }
-function writeScores(arr){ fs.writeFileSync(DATA, JSON.stringify(arr,null,2)) }
+// Aplicamos el middleware de CORS
+// Esto permite que tu página de GitHub Pages pueda hacerle peticiones
+app.use(cors()); 
 
-const rate = {}; const RATE_WINDOW = 60*1000; const MAX_PER_WINDOW = 10;
-function checkRate(ip){ const now = Date.now(); if(!rate[ip]) rate[ip] = []; rate[ip] = rate[ip].filter(t=> t > now - RATE_WINDOW); if(rate[ip].length >= MAX_PER_WINDOW) return false; rate[ip].push(now); return true }
+app.use(express.json());
 
-app.get('/scores', (req,res)=>{
-  const limit = Math.min(parseInt(req.query.limit)||10,50);
-  const scores = readScores().sort((a,b)=> b.score - a.score).slice(0, limit);
-  res.json(scores);
+const scoresFilePath = path.join(__dirname, 'data', 'scores.json');
+
+// Ruta para obtener las puntuaciones
+app.get('/scores', async (req, res) => {
+    try {
+        const data = await fs.readFile(scoresFilePath, 'utf8');
+        res.json(JSON.parse(data));
+    } catch (error) {
+        // Si el archivo no existe, regresa un arreglo vacío
+        if (error.code === 'ENOENT') {
+            return res.json([]);
+        }
+        res.status(500).send('Error al leer las puntuaciones');
+    }
 });
 
-app.post('/scores', (req,res)=>{
-  const ip = req.ip || req.connection.remoteAddress;
-  if(!checkRate(ip)) return res.status(429).json({ error:'rate limit' });
-  const { name, score, level } = req.body;
-  if(!name || typeof name !== 'string' || name.trim().length>30) return res.status(400).json({ error:'name' });
-  if(typeof score !== 'number' || score < 0 || score > 1e7) return res.status(400).json({ error:'score' });
-  const entry = { name: name.trim().slice(0,30), score: Math.floor(score), level: parseInt(level)||1, date: new Date().toISOString() };
-  const arr = readScores(); arr.push(entry); writeScores(arr);
-  res.json({ ok:true });
+// Ruta para guardar una nueva puntuación
+app.post('/scores', async (req, res) => {
+    try {
+        const newScore = req.body;
+        let scores = [];
+
+        try {
+            const data = await fs.readFile(scoresFilePath, 'utf8');
+            scores = JSON.parse(data);
+        } catch (error) {
+            // Si el archivo no existe, lo crearemos con el primer score
+            if (error.code !== 'ENOENT') throw error;
+        }
+
+        scores.push(newScore);
+        
+        // Ordenamos y mantenemos solo los 10 mejores
+        scores.sort((a, b) => b.score - a.score);
+        const topScores = scores.slice(0, 10);
+
+        await fs.writeFile(scoresFilePath, JSON.stringify(topScores, null, 2));
+        res.status(201).send('Puntuación guardada');
+
+    } catch (error) {
+        res.status(500).send('Error al guardar la puntuación');
+    }
 });
 
-const PORT = process.env.PORT || 3000; app.listen(PORT, ()=> console.log('Server on', PORT));
+app.listen(PORT, () => {
+    console.log(`El servidor está corriendo en el puerto ${PORT}`);
+});
