@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calma — App de Meditación</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!--
+    Práctica 3: Landing Page Interactiva con Validación de Formulario
+    Producto ficticio: "Calma" — App de meditación y respiración consciente.
+    Estructura semántica con <header>, <section>, <article>, <footer>.
+  -->
+  <header class="site-header" role="banner">
+    <nav class="nav" aria-label="Principal">
+      <a class="logo" href="#" aria-label="Ir al inicio">🧘‍♀️ Calma</a>
+      <ul class="nav-links">
+        <li><a href="#beneficios">Beneficios</a></li>
+        <li><a href="#caracteristicas">Características</a></li>
+        <li><a href="#contacto">Contacto</a></li>
+      </ul>
+      <button id="ctaTop" class="btn btn-primary" type="button">Suscríbete</button>
+    </nav>
+
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-content">
+        <h1 id="hero-title">Respira. Enfoca. Calma.</h1>
+        <p>Una app de meditación para ayudarte a construir hábitos de bienestar en minutos al día.</p>
+        <button id="ctaHero" class="btn btn-accent btn-lg" type="button">Suscríbete</button>
+      </div>
+    </section>
+  </header>
+
+  <main id="contenido" class="content" role="main">
+    <section id="beneficios" class="section" aria-labelledby="beneficios-title">
+      <h2 id="beneficios-title">Beneficios</h2>
+      <div class="grid-3">
+        <article class="card" aria-label="Mejor sueño">
+          <h3>Mejor sueño</h3>
+          <p>Rutinas de respiración guiada para conciliar el sueño más rápido.</p>
+        </article>
+        <article class="card" aria-label="Menos estrés">
+          <h3>Menos estrés</h3>
+          <p>Sesiones cortas para regular el sistema nervioso y recuperar el foco.</p>
+        </article>
+        <article class="card" aria-label="Hábitos sanos">
+          <h3>Hábitos sanos</h3>
+          <p>Recordatorios amables y estadísticas para sostener tu progreso.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="caracteristicas" class="section" aria-labelledby="caracteristicas-title">
+      <h2 id="caracteristicas-title">Características</h2>
+      <div class="features">
+        <article class="feature">
+          <h3>Meditaciones guiadas</h3>
+          <p>Biblioteca curada con audios de 3 a 15 minutos.</p>
+        </article>
+        <article class="feature">
+          <h3>Respiración consciente</h3>
+          <p>Animaciones que marcan el ritmo para inhalar y exhalar.</p>
+        </article>
+        <article class="feature">
+          <h3>Modo offline</h3>
+          <p>Descarga sesiones para usarlas sin conexión.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="contacto" class="section" aria-labelledby="contacto-title">
+      <h2 id="contacto-title">Contáctanos</h2>
+      <!--
+        Formulario con validación en tiempo real (JS).
+        Reglas: nombre requerido (>= 2 chars), email con formato, mensaje requerido (>= 10 chars).
+      -->
+      <form id="contactForm" novalidate aria-describedby="form-help">
+        <div class="form-field">
+          <label for="name">Nombre</label>
+          <input id="name" name="name" type="text" placeholder="Tu nombre" required minlength="2" />
+          <small class="error" id="err-name" aria-live="polite"></small>
+        </div>
+        <div class="form-field">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" placeholder="tu@email.com" required />
+          <small class="error" id="err-email" aria-live="polite"></small>
+        </div>
+        <div class="form-field">
+          <label for="message">Mensaje</label>
+          <textarea id="message" name="message" rows="4" placeholder="Cuéntanos en qué te ayudamos" required minlength="10"></textarea>
+          <small class="error" id="err-message" aria-live="polite"></small>
+        </div>
+
+        <p id="form-help" class="help">Todos los campos son obligatorios. Validación en tiempo real.</p>
+        <button class="btn btn-primary" type="submit">Enviar</button>
+      </form>
+    </section>
+  </main>
+
+  <footer class="site-footer" role="contentinfo">
+    <p>&copy; <span id="year"></span> Calma. Hecho con ❤️ para la Práctica 3.</p>
+  </footer>
+
+  <!-- Modal de éxito -->
+  <div id="successModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-hidden="true">
+    <div class="modal-content">
+      <h3 id="modal-title">¡Gracias por contactarnos!</h3>
+      <p>Tu mensaje fue enviado correctamente. Te responderemos muy pronto.</p>
+      <button id="closeModal" class="btn" type="button" aria-label="Cerrar">Cerrar</button>
+    </div>
+  </div>
+
+  <!-- Contenedor para confeti -->
+  <div id="confetti" aria-hidden="true"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
