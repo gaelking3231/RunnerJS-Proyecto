@@ -1,4 +1,5 @@
 🎮 RunnerJS - Proyecto Integrador 🚀
+.
 
 ¡Bienvenido a RunnerJS! Un juego endless runner de ciencia ficción inspirado en el clásico de Google, pero con un toque temático de Halo. Salta para esquivar obstáculos, sobrevive para subir de nivel y compite por el puntaje más alto en el leaderboard global.
 
